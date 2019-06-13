@@ -1,6 +1,7 @@
 {
     "name": "blog-horizontal-cards",
     "type": "section",
+    "wewebPublic": true,
     "repository": {
         "type": "git",
         "url": "https://github.com/WeWeb-Public/feature_C"

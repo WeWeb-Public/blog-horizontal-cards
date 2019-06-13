@@ -2,10 +2,10 @@ module.exports = [
     {
         name: 'cards',
         storeName: {
-            en: "cards"
+            en: "blog - horizontal cards"
         },
         storeDesc: {
-            en: "cards"
+            en: "blog - horizontal cards"
         }
     }
 ]
