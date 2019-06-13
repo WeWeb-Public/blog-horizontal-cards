@@ -1,6 +1,7 @@
 module.exports = [
     {
         name: 'cards',
+        category: 'blog',
         storeName: {
             en: "blog - horizontal cards"
         },
