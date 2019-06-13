@@ -4,9 +4,9 @@
     "wewebPublic": true,
     "repository": {
         "type": "git",
-        "url": "https://github.com/WeWeb-Public/feature_C"
+        "url": "https://github.com/WeWeb-Public/blog-horizontal-cards"
     },
-    "version": "0.0.1",
+    "version": "0.0.2",
     "private": true,
     "scripts": {
         "build": "weweb-build",
