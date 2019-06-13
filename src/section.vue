@@ -1,5 +1,5 @@
 <template>
-    <div class="blog-horizontal-cards">
+    <div class="blog-horizontal-cards" :style="customStyle">
         <!-- wwManager:start -->
         <wwSectionEditMenu :sectionCtrl="sectionCtrl" :options="openOptions"></wwSectionEditMenu>
         <!-- wwManager:end -->
@@ -15,20 +15,22 @@
         <!--THUMBNAILS-->
         <div class="thumbnail-container">
             <div class="thumbnail" v-for="(thumbnail, index) in section.data.thumbnails" :key="thumbnail.uniqueId">
-                <!-- wwManager:start -->
-                <wwContextMenu tag="div" class="contextmenu" v-if="sectionCtrl.getEditMode() == 'CONTENT'" @ww-add-before="addCardBefore(index)" @ww-add-after="addCardAfter(index)" @ww-remove="removeCard(index)">
-                    <div class="wwi wwi-config"></div>
-                </wwContextMenu>
-                <!-- wwManager:end -->
+                <div class="thumbnail-border">
+                    <!-- wwManager:start -->
+                    <wwContextMenu tag="div" class="contextmenu" v-if="sectionCtrl.getEditMode() == 'CONTENT'" @ww-add-before="addCardBefore(index)" @ww-add-after="addCardAfter(index)" @ww-remove="removeCard(index)">
+                        <div class="wwi wwi-config"></div>
+                    </wwContextMenu>
+                    <!-- wwManager:end -->
 
-                <div class="content-container" :style="{'order': isPair(index)}">
-                    <wwObject class="background" :ww-object="thumbnail.background" ww-category="background" ww-default-object-type="ww-color"></wwObject>
-                    <wwLayoutColumn tag="div" ww-default="ww-image" :ww-list="thumbnail.contents" class="content" @ww-add="add(thumbnail.contents, $event)" @ww-remove="remove(thumbnail.contents, $event)">
-                        <wwObject v-for="content in thumbnail.contents" :key="content.uniqueId" :ww-object="content"></wwObject>
-                    </wwLayoutColumn>
-                </div>
-                <div class="image-container">
-                    <wwObject class="background" :ww-object="thumbnail.image" ww-category="background" ww-default-object-type="ww-image" :style="{'border-top-right-radius': '7px', 'border-bottom-right-radius': '7px'}"></wwObject>
+                    <div class="content-container" :style="{'order': isMobileOrPair(index)}">
+                        <wwObject class="background" :ww-object="thumbnail.background" ww-category="background" ww-default-object-type="ww-color"></wwObject>
+                        <wwLayoutColumn tag="div" ww-default="ww-image" :ww-list="thumbnail.contents" class="content" @ww-add="add(thumbnail.contents, $event)" @ww-remove="remove(thumbnail.contents, $event)">
+                            <wwObject v-for="content in thumbnail.contents" :key="content.uniqueId" :ww-object="content"></wwObject>
+                        </wwLayoutColumn>
+                    </div>
+                    <div class="image-container">
+                        <wwObject class="background" :ww-object="thumbnail.image" ww-category="background" ww-default-object-type="ww-image"></wwObject>
+                    </div>
                 </div>
             </div>
         </div>
@@ -45,24 +47,66 @@
 <script>
 
 /* wwManager:start */
-import featureCColumnPerLine from './featureCColumnPerLine.vue'
-wwLib.wwPopups.addPopup('featureCColumnPerLine', featureCColumnPerLine);
-wwLib.wwPopups.addStory('FEATURE_C_COLUMN_COUNT', {
+wwLib.wwPopups.addStory('BLOG_CARD_CONFIG', {
     title: {
-        en: 'Column per line',
-        fr: 'Nombre de colonnes par ligne'
+        en: 'Cards config',
+        fr: 'Configuration des cartes'
     },
-    type: 'featureCColumnPerLine',
+    type: 'wwPopupForm',
+    storyData: {
+        fields: [
+            {
+                label: {
+                    en: 'Shadow Color:',
+                    fr: 'Couleur de l\'ombre :'
+                },
+                type: 'text',
+                key: 'shadowColor',
+                valueData: 'shadowColor',
+                desc: {
+                    en: 'Example: 0 10px 40px 0 rgba(113, 124, 137, 0.2)',
+                    fr: 'Exemple : 0 10px 40px 0 rgba(113, 124, 137, 0.2)'
+                }
+            },
+            {
+                label: {
+                    en: 'Shadow Color After hover:',
+                    fr: 'Couleur de l\'ombre après le hover:'
+                },
+                type: 'text',
+                key: 'shadowColorAfter',
+                valueData: 'shadowColorAfter',
+                desc: {
+                    en: 'Example: 0 16px 32px rgba(113, 124, 137, 0.4)',
+                    fr: 'Exemple : 0 16px 32px rgba(113, 124, 137, 0.4)'
+                }
+            },
+            {
+                label: {
+                    en: 'Border radius in px:',
+                    fr: 'Arrondis des coins en px :'
+                },
+                type: 'text',
+                key: 'cardBorderRadius',
+                valueData: 'cardBorderRadius',
+                desc: {
+                    en: 'Edit card border radius',
+                    fr: 'Changer la bordure des coins des cartes'
+                }
+            },
+        ]
+    },
     buttons: {
-        FINISH: {
+        NEXT: {
             text: {
-                en: 'Finish',
-                fr: 'Terminer'
+                en: 'Ok',
+                fr: 'Ok'
             },
             next: false
         }
     }
-});
+})
+
 /* wwManager:end */
 
 export default {
@@ -78,6 +122,13 @@ export default {
     computed: {
         section() {
             return this.sectionCtrl.get();
+        },
+        customStyle() {
+            return {
+                '--cardBorderRadius': this.section.data.cardBorderRadius + 'px',
+                '--shadowColor': this.section.data.shadowColor,
+                '--shadowColorAfter': this.section.data.shadowColorAfter
+            }
         }
     },
     methods: {
@@ -109,8 +160,16 @@ export default {
                 })
                 needUpdate = true;
             }
-            if (!this.section.data.thumbnailsPerLine) {
-                this.section.data.thumbnailsPerLine = 4;
+            if (!this.section.data.shadowColor) {
+                this.section.data.shadowColor = '0 10px 40px 0 rgba(113, 124, 137, 0.2)';
+                needUpdate = true;
+            }
+            if (!this.section.data.shadowColorAfter) {
+                this.section.data.shadowColorAfter = '0 16px 32px rgba(113, 124, 137, 0.4)';
+                needUpdate = true;
+            }
+            if (!this.section.data.cardBorderRadius) {
+                this.section.data.cardBorderRadius = '0';
                 needUpdate = true;
             }
             if (needUpdate) {
@@ -118,13 +177,22 @@ export default {
             }
         },
         init() {
-            window.addEventListener("resize", this.setThumbnailsPerLine);
+            window.addEventListener("resize", this.isMobileOrPair);
         },
-        isPair(index) {
-            if (index % 2) {
+        isMobileOrPair(index) {
+            let w = window,
+                d = document,
+                e = d.documentElement,
+                g = d.getElementsByTagName('body')[0],
+                x = w.innerWidth || e.clientWidth || g.clientWidth,
+                y = w.innerHeight || e.clientHeight || g.clientHeight;
+
+            if (x < 769) {
+                return 1
+            } else if (index % 2) {
                 return 1;
             } else {
-                return 0;
+                return 0
             }
         },
 
@@ -165,20 +233,30 @@ export default {
 
         async openOptions() {
             let options = {
-                firstPage: 'FEATURE_C_COLUMN_COUNT',
+                firstPage: 'BLOG_CARD_CONFIG',
                 data: {
-                    columnPerLine: this.section.data.thumbnailsPerLine
+                    shadowColor: this.section.data.shadowColor,
+                    shadowColorAfter: this.section.data.shadowColorAfter,
+                    cardBorderRadius: this.section.data.cardBorderRadius
                 },
             }
 
             const result = await wwLib.wwPopups.open(options)
-
-            if (result.columnPerLine) {
-                this.section.data.thumbnailsPerLine = result.columnPerLine;
-
+            let updateSection = false;
+            if (result.shadowColor) {
+                this.section.data.shadowColor = result.shadowColor;
+                updateSection = true;
+            }
+            if (result.shadowColorAfter) {
+                this.section.data.shadowColorAfter = result.shadowColorAfter;
+                updateSection = true;
+            }
+            if (result.cardBorderRadius) {
+                this.section.data.cardBorderRadius = result.cardBorderRadius;
+                updateSection = true;
+            }
+            if (updateSection) {
                 this.sectionCtrl.update(this.section);
-
-                this.setThumbnailsPerLine();
             }
 
 
@@ -227,19 +305,32 @@ export default {
         flex-wrap: wrap;
 
         .thumbnail {
-            display: flex;
-            width: 75%;
+            width: 90%;
             margin-right: 15px;
             position: relative;
             margin: 30px 15px;
-            background-color: white;
+            border-radius: var(--cardBorderRadius);
             min-height: 50px;
-            box-shadow: 0 10px 40px 0 rgba(113, 124, 137, 0.2);
-            border-radius: 7px;
+            box-shadow: var(--shadowColor);
             transition: transform 0.4s ease-out, box-shadow 0.4s ease-out;
-
+            @media (min-width: 768px) {
+                width: 90%;
+            }
+            @media (min-width: 992px) {
+                width: 75%;
+            }
+            @media (min-width: 1200px) {
+                width: 70%;
+            }
+            .thumbnail-border {
+                display: flex;
+                flex-wrap: wrap;
+                overflow: hidden;
+                border-radius: var(--cardBorderRadius);
+                width: 100%;
+            }
             &:hover {
-                box-shadow: 0 16px 32px rgba(113, 124, 137, 0.4);
+                box-shadow: var(--shadowColorAfter);
                 transform: translateY(-10px);
             }
 
@@ -249,14 +340,21 @@ export default {
 
             .content-container {
                 position: relative;
-                width: 50%;
+                width: 100%;
+                @media (min-width: 768px) {
+                    width: 50%;
+                }
             }
 
             .image-container {
                 position: relative;
-                width: 50%;
+                width: 100%;
+                min-height: 200px;
                 .background {
                     overflow: hidden;
+                }
+                @media (min-width: 768px) {
+                    width: 50%;
                 }
             }
 
