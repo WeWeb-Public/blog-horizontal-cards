@@ -1,27 +1,27 @@
 {
-  "name": "blog-horizontal-cards",
-  "type": "section",
-  "wewebPublic": true,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/WeWeb-Public/blog-horizontal-cards"
-  },
-  "version": "0.0.5",
-  "private": true,
-  "scripts": {
-    "build": "weweb-build",
-    "serve": "weweb-serve",
-    "create-config": "weweb-config"
-  },
-  "dependencies": {
-    "vue": "^2.6.11"
-  },
-  "devDependencies": {
-    "weweb-client": "^1.1.3"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ]
+    "name": "blog-horizontal-cards",
+    "type": "section",
+    "wewebPublic": true,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/WeWeb-Public/blog-horizontal-cards"
+    },
+    "version": "0.0.7",
+    "private": true,
+    "scripts": {
+        "build": "weweb-build",
+        "serve": "weweb-serve",
+        "create-config": "weweb-config"
+    },
+    "dependencies": {
+        "vue": "^2.6.11"
+    },
+    "devDependencies": {
+        "weweb-client": "latest"
+    },
+    "browserslist": [
+        "> 1%",
+        "last 2 versions",
+        "not ie <= 8"
+    ]
 }
